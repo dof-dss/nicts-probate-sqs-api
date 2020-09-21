@@ -8,6 +8,7 @@ using Amazon.SQS.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using nicts_probate_sqs_api.Models;
 
@@ -18,10 +19,12 @@ namespace nicts_probate_sqs_api.Controllers
     public class ProbateController : ControllerBase
     {
         private readonly IAmazonSQS _sqsClient;
+        private readonly QueueModel _queueModel;
 
-        public ProbateController(IAmazonSQS sqsClient)
+        public ProbateController(IAmazonSQS sqsClient, IOptions<QueueModel> options)
         {
             _sqsClient = sqsClient;
+            _queueModel = options?.Value;
         }
 
         [HttpPost]
@@ -30,13 +33,24 @@ namespace nicts_probate_sqs_api.Controllers
         {
             var sendMessageRequest = new SendMessageRequest
             {
-                QueueUrl = "",
+                QueueUrl = _queueModel.Url,
                 MessageBody = JsonConvert.SerializeObject(applicationModel)
             };
 
             var sendMessageResponse = await _sqsClient.SendMessageAsync(sendMessageRequest);
 
             return sendMessageResponse == null ? (IActionResult) BadRequest() : Ok();
+        }
+
+        [HttpGet]
+        [Route("Queue")]
+        public async Task<IActionResult> DeQueue()
+        {
+            var receiveMessageResponse =
+                await _sqsClient.ReceiveMessageAsync(_queueModel.Url);
+
+            return receiveMessageResponse == null ? (IActionResult)BadRequest() 
+                : Ok(JsonConvert.DeserializeObject<ProbateApplicationModel>(receiveMessageResponse?.Messages?.First()?.Body));
         }
     }
 }

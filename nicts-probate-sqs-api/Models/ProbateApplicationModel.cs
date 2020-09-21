@@ -31,25 +31,4 @@ namespace nicts_probate_sqs_api.Models
         public StatementOfTruth StatementOfTruth { get; set; }
         public IEnumerable<Codicil> Codicils { get; set; }
     }
-
-    public class DocumentModel
-    {
-        public string DocumentType { get; set; }
-        public string Name { get; set; }
-        public string URL { get; set; }
-        public DateTime DateUploaded { get; set; }
-    }
-
-    public class StatementOfTruth
-    {
-        public DateTime DateSigned { get; set; }
-        public string Statement { get; set; }
-    }
-
-    public class Codicil
-    {
-        public DateTime DateSigned { get; set; }
-        public DateTime DateUploaded { get; set; }
-        public string URL { get; set; }
-    }
 }

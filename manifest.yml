@@ -1,0 +1,6 @@
+---
+applications:
+- name: nicts-probate-sqs-api
+  buildpacks:
+  - dotnet_core_buildpack
+  memory: 256M

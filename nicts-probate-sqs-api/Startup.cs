@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Amazon;
+using Amazon.Extensions.NETCore.Setup;
+using Amazon.Runtime;
 using Amazon.SQS;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,8 +14,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using nicts_probate_sqs_api.Models;
+using nicts_probate_sqs_api.Services;
+using Steeltoe.Extensions.Configuration.CloudFoundry;
 
 namespace nicts_probate_sqs_api
 {
@@ -21,20 +28,48 @@ namespace nicts_probate_sqs_api
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            _credentialsModel = new CredentialsModel
+            {
+                AccessKey = Configuration["vcap:services:user-provided:0:credentials:AccessKey"],
+                SecretKey = Configuration["vcap:services:user-provided:0:credentials:SecretKey"],
+                Region = Configuration["vcap:services:user-provided:0:credentials:Region"]
+            };
         }
 
         public IConfiguration Configuration { get; }
+        private readonly CredentialsModel _credentialsModel;
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to add services to the container.
+        /// It also leverages SteelToe to pull in configuration that has been set on CLoud Foundry,
+        /// specifically the AWS credentials for the user of SQS client.
+        ///
+        /// This is achieved by creating a user provided service on Cloud Foundry that is bound to this app.
+        /// Credentials then become accessible to app via VCAP_SERVICES. These can be retrieved in Startup
+        /// directly from Configuration object, or by injecting into services, see queue services.
+        /// 
+        /// </summary>
+        /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddAWSService<IAmazonSQS>(Configuration.GetAWSOptions());
+
+            services.AddOptions();
+            services.ConfigureCloudFoundryOptions(Configuration);
+
+            services.AddAWSService<IAmazonSQS>(new AWSOptions()
+            {
+                Credentials = new BasicAWSCredentials(_credentialsModel.AccessKey, _credentialsModel.SecretKey),
+                Region = RegionEndpoint.GetBySystemName(_credentialsModel.Region)
+            });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "NICTS Probate API", Version = "v1" });
             });
             services.Configure<QueueModel>(Configuration.GetSection("Queue"));
+
+            services.AddScoped<IQueueService, QueueByInjectionService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

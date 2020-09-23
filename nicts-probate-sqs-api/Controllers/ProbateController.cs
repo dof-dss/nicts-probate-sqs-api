@@ -19,6 +19,9 @@ using Steeltoe.Extensions.Configuration.CloudFoundry;
 
 namespace nicts_probate_sqs_api.Controllers
 {
+    /// <summary>
+    /// PoC to highlight how to integrate with Amazon SQS via GOV UK PaaS
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class ProbateController : ControllerBase

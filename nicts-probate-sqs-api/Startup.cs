@@ -41,6 +41,7 @@ namespace nicts_probate_sqs_api
 
         /// <summary>
         /// This method gets called by the runtime. Use this method to add services to the container.
+        /// 
         /// It also leverages SteelToe to pull in configuration that has been set on CLoud Foundry,
         /// specifically the AWS credentials for the user of SQS client.
         ///
@@ -69,7 +70,8 @@ namespace nicts_probate_sqs_api
             });
             services.Configure<QueueModel>(Configuration.GetSection("Queue"));
 
-            services.AddScoped<IQueueService, QueueByInjectionService>();
+            //services.AddScoped<IQueueService, QueueByInjectionService>();
+            services.AddScoped<IQueueService, QueueByConfigurationService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

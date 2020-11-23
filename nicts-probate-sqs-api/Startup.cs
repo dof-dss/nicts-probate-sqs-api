@@ -68,7 +68,7 @@ namespace nicts_probate_sqs_api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "NICTS Probate API", Version = "v1" });
             });
-            services.Configure<QueueModel>(Configuration.GetSection("Queue"));
+            services.Configure<QueueModel>(Configuration.GetSection("vcap:services:user-provided:0:credentials:Queue"));
 
             //services.AddScoped<IQueueService, QueueByInjectionService>();
             services.AddScoped<IQueueService, QueueByConfigurationService>();

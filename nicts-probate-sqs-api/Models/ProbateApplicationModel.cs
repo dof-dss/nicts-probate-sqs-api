@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
+
 
 namespace nicts_probate_sqs_api.Models
 {
     public class ProbateApplicationModel
     {
         public int ApplicationId { get; set; }
+        [XmlElement(ElementName = "applicationType")]
         public string ApplicationType { get; set; }
         public bool HasOriginalWill { get; set; }
         public DateTime DateWillSigned { get; set; }

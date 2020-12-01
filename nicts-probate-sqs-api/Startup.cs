@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Amazon;
 using Amazon.Extensions.NETCore.Setup;
@@ -10,6 +12,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Mvc.Formatters.Xml;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -17,6 +21,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using nicts_probate_sqs_api.Filters;
 using nicts_probate_sqs_api.Models;
 using nicts_probate_sqs_api.Services;
 using Steeltoe.Extensions.Configuration.CloudFoundry;
@@ -53,7 +58,7 @@ namespace nicts_probate_sqs_api
         /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers().AddXmlSerializerFormatters().AddXmlDataContractSerializerFormatters(); ;
 
             services.AddOptions();
             services.ConfigureCloudFoundryOptions(Configuration);
@@ -66,6 +71,7 @@ namespace nicts_probate_sqs_api
 
             services.AddSwaggerGen(c =>
             {
+                c.SchemaFilter<AddNamespaceFilter>();
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "NICTS Probate API", Version = "v1" });
             });
             services.Configure<QueueModel>(Configuration.GetSection("vcap:services:user-provided:0:credentials:Queue"));

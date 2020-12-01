@@ -35,12 +35,14 @@ namespace nicts_probate_sqs_api.Controllers
 
         [HttpPost]
         [Route("Queue")]
+        [Consumes("application/xml")]
         public async Task<IActionResult> SendToQueue([FromBody] ProbateApplicationModel applicationModel) => 
             (await _queueService.EnQueue(applicationModel)).OnBoth(r => 
                 r.IsSuccess ? (IActionResult)Ok() : BadRequest(r.Error));
 
         [HttpGet]
         [Route("Queue")]
+        [Produces("application/xml")]
         public async Task<IActionResult> DeQueue() =>
             (await _queueService.DeQueue()).OnBoth(r =>
                 r.IsSuccess ? (IActionResult) Ok(r.Value) : BadRequest(r.Error));

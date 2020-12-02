@@ -30,9 +30,14 @@ namespace nicts_probate_sqs_api.Models
         public string OtherName { get; set; }
         public int ExtraUKCopies { get; set; }
         public int ExtraSealedCopies { get; set; }
-        public IEnumerable<ParticipantModel> Participants { get; set; }
-        public IEnumerable<DocumentModel> Documents { get; set; }
         public StatementOfTruth StatementOfTruth { get; set; }
+
+
+        public IEnumerable<ParticipantModel> Participants { get; set; }
+
+        public IEnumerable<DocumentModel> Documents { get; set; }
+
         public IEnumerable<Codicil> Codicils { get; set; }
+
     }
 }

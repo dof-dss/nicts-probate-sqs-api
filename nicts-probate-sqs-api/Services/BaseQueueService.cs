@@ -23,7 +23,7 @@ namespace nicts_probate_sqs_api.Services
             var sendMessageRequest = new SendMessageRequest
             {
                 QueueUrl = _queueModel.Url,
-                MessageBody = JsonConvert.SerializeObject(probateApplicationModel)
+                MessageBody = probateApplicationModel.Serialize()
             };
 
             var sendMessageResponse = await _sqsClient.SendMessageAsync(sendMessageRequest);
@@ -40,7 +40,7 @@ namespace nicts_probate_sqs_api.Services
             var probateApplications = new List<ProbateApplicationModel>();
             foreach (var message in receiveMessageResponse.Messages)
             {
-                probateApplications.Add(JsonConvert.DeserializeObject<ProbateApplicationModel>(message.Body));
+                probateApplications.Add(message.Body.Deserialize<ProbateApplicationModel>());
                 await DeleteMessage(message.ReceiptHandle).ConfigureAwait(false);
 
             }

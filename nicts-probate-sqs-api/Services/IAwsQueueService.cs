@@ -5,7 +5,7 @@ using nicts_probate_sqs_api.Models;
 
 namespace nicts_probate_sqs_api.Services
 {
-    public interface IQueueService
+    public interface IAwsQueueService
     {
         Task<Result> EnQueue(ProbateApplicationModel probateApplicationModel);
         Task<Result<List<ProbateApplicationModel>>> DeQueue();

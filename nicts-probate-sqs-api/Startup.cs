@@ -23,6 +23,7 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using nicts_probate_sqs_api.Filters;
 using nicts_probate_sqs_api.Models;
+using nicts_probate_sqs_api.PaaS;
 using nicts_probate_sqs_api.Services;
 using Steeltoe.Extensions.Configuration.CloudFoundry;
 
@@ -77,7 +78,8 @@ namespace nicts_probate_sqs_api
             services.Configure<QueueModel>(Configuration.GetSection("vcap:services:user-provided:0:credentials:Queue"));
 
             //services.AddScoped<IQueueService, QueueByInjectionService>();
-            services.AddScoped<IQueueService, QueueByConfigurationService>();
+            services.AddScoped<IAwsQueueService, AwsQueueByConfigurationService>();
+            services.AddScoped<IProbateSQSService, ProbateSQSService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

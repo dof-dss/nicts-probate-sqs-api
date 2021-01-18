@@ -26,25 +26,25 @@ namespace nicts_probate_sqs_api.Controllers
     [ApiController]
     public class ProbateController : ControllerBase
     {
-        private readonly IQueueService _queueService;
+        private readonly IAwsQueueService _awsQueueService;
 
-        public ProbateController(IQueueService queueService)
+        public ProbateController(IAwsQueueService awsQueueService)
         {
-            _queueService = queueService;
+            _awsQueueService = awsQueueService;
         }
 
         [HttpPost]
         [Route("Queue")]
         [Consumes("application/xml")]
         public async Task<IActionResult> SendToQueue([FromBody] ProbateApplicationModel applicationModel) => 
-            (await _queueService.EnQueue(applicationModel)).OnBoth(r => 
+            (await _awsQueueService.EnQueue(applicationModel)).OnBoth(r => 
                 r.IsSuccess ? (IActionResult)Ok() : BadRequest(r.Error));
 
         [HttpGet]
         [Route("Queue")]
         [Produces("application/xml")]
         public async Task<IActionResult> DeQueue() =>
-            (await _queueService.DeQueue()).OnBoth(r =>
+            (await _awsQueueService.DeQueue()).OnBoth(r =>
                 r.IsSuccess ? (IActionResult) Ok(r.Value) : BadRequest(r.Error));
     }
 }

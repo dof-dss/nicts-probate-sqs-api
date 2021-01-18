@@ -13,7 +13,7 @@ namespace nicts_probate_sqs_api.Services
     /// <summary>
     /// Base wrapper class for AWS SQS Client
     /// </summary>
-    public class BaseQueueService: IQueueService
+    public class BaseAwsQueueService: IAwsQueueService
     {
         protected IAmazonSQS _sqsClient;
         protected QueueModel _queueModel;

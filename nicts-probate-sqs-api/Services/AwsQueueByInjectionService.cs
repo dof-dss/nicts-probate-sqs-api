@@ -14,9 +14,9 @@ namespace nicts_probate_sqs_api.Services
     /// <summary>
     /// Configuration of queue is set up in Startup and injected into this class
     /// </summary>
-    public class QueueByInjectionService : BaseQueueService
+    public class AwsQueueByInjectionService : BaseAwsQueueService
     {
-        public QueueByInjectionService(IAmazonSQS sqsClient, IOptions<QueueModel> options)
+        public AwsQueueByInjectionService(IAmazonSQS sqsClient, IOptions<QueueModel> options)
         {
             _sqsClient = sqsClient;
             _queueModel = options?.Value;

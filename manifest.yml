@@ -6,3 +6,4 @@ applications:
   memory: 256M
   services:
   - aws-iam-credentials
+  - probateSQSService

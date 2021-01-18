@@ -16,9 +16,9 @@ namespace nicts_probate_sqs_api.Services
     /// Accesses configuration via the Options pattern provided by SteelToe
     /// and sets up SQS Client in constructor
     /// </summary>
-    public class QueueByConfigurationService: BaseQueueService
+    public class AwsQueueByConfigurationService: BaseAwsQueueService
     {
-        public QueueByConfigurationService(IOptions<QueueModel> options,
+        public AwsQueueByConfigurationService(IOptions<QueueModel> options,
             IOptions<CloudFoundryApplicationOptions> appOptions,
             IOptions<CloudFoundryServicesOptions> serviceOptions)
         {
